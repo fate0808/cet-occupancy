@@ -4,6 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 const { rooms, schedules } = require('./sample-data');
+const detect = require('detect-port').default;   // <-- added here
 
 const app = express();
 const server = http.createServer(app);
@@ -104,9 +105,12 @@ io.on('connection', (socket) => {
 });
 
 // -----------------------------
-// Start server
+// Start server (auto-detect port)
 // -----------------------------
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`CET Occupancy server running at http://localhost:${PORT}`);
+const DEFAULT_PORT = process.env.PORT || 3000;
+
+detect(DEFAULT_PORT).then(port => {
+  server.listen(port, () => {
+    console.log(`CET Occupancy server running at http://localhost:${port}`);
+  });
 });
